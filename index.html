@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Grand Line Wanted Poster Maker</title>
+  <link rel="stylesheet" href="assets/SundayRegular.css">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <main class="app">
+    <section class="workspace" aria-label="Wanted poster preview">
+      <div class="poster-wrap">
+        <article class="poster" id="poster">
+          <div class="photo-frame">
+            <img id="previewImage" alt="Poster portrait preview">
+            <div class="photo-empty" id="photoEmpty">
+              <span>Upload Portrait</span>
+            </div>
+          </div>
+          <p class="pirate-name" id="nameText">Monkey D. Luffy</p>
+          <div class="bottom-line">
+            <p class="bounty" id="bountyText">30,000,000,000</p>
+          </div>
+        </article>
+      </div>
+    </section>
+
+    <aside class="controls" aria-label="Poster controls">
+      <div class="title-block">
+        <p>Grand Line Studio</p>
+        <h2>Create your bounty poster</h2>
+      </div>
+
+      <label>
+        Portrait
+        <input type="file" id="imageInput" accept="image/*">
+      </label>
+
+      <label>
+        Name
+        <input type="text" id="nameInput" value="Monkey D. Luffy" maxlength="28">
+      </label>
+
+      <label>
+        Bounty
+        <input type="text" id="bountyInput" value="30,000,000,000" maxlength="18">
+      </label>
+
+      <label>
+        Name Size
+        <input type="range" id="nameSizeInput" min="70" max="125" value="100">
+      </label>
+
+      <label>
+        Name X Position
+        <input type="range" id="nameXInput" min="0" max="45" value="0" step="0.1">
+      </label>
+
+      <label>
+        Name Y Position
+        <input type="range" id="nameYInput" min="66" max="80" value="73.2" step="0.1">
+      </label>
+
+      <label>
+        Bounty Size
+        <input type="range" id="bountySizeInput" min="70" max="120" value="100">
+      </label>
+
+      <label>
+        Photo Zoom
+        <input type="range" id="zoomInput" min="100" max="260" value="145">
+      </label>
+
+      <label>
+        Photo X Position
+        <input type="range" id="photoXInput" min="0" max="100" value="50">
+      </label>
+
+      <label>
+        Photo Y Position
+        <input type="range" id="photoYInput" min="0" max="100" value="50">
+      </label>
+
+      <div class="button-row">
+        <button type="button" id="randomButton">Random Bounty</button>
+        <button type="button" id="downloadButton">Download</button>
+      </div>
+    </aside>
+  </main>
+
+  <script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
+  <script src="script.js"></script>
+</body>
+</html>
