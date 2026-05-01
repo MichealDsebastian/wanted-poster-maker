@@ -69,10 +69,17 @@ downloadButton.addEventListener("click", async () => {
     return;
   }
 
+  if (document.fonts?.ready) {
+    await document.fonts.ready;
+  }
+
   const canvas = await html2canvas(poster, {
     backgroundColor: null,
     scale: 3,
-    useCORS: true
+    useCORS: true,
+    onclone: (clonedDocument) => {
+      clonedDocument.getElementById("poster")?.classList.add("download-capture");
+    }
   });
 
   const link = document.createElement("a");
