@@ -103,18 +103,32 @@ const drawTextOnly = (ctx, text, options) => {
   ctx.fillText(text.toUpperCase(), options.x, options.y);
 };
 
+const strokeTextOnly = (ctx, text, options) => {
+  ctx.font = `${options.size}px SundayRegular, Georgia, serif`;
+  ctx.textAlign = options.align;
+  ctx.textBaseline = "top";
+  if ("letterSpacing" in ctx) {
+    ctx.letterSpacing = options.letterSpacing || "0px";
+  }
+  ctx.strokeText(text.toUpperCase(), options.x, options.y);
+};
+
 const drawPosterText = (ctx, text, options) => {
   const textLayer = document.createElement("canvas");
   textLayer.width = POSTER_WIDTH;
   textLayer.height = POSTER_HEIGHT;
   const textCtx = textLayer.getContext("2d");
+  const inkColor = options.color || "#635135";
 
   textCtx.save();
-  textCtx.globalAlpha = 0.94;
-  textCtx.fillStyle = "#635135";
-  textCtx.shadowColor = "rgba(42, 31, 21, 0.28)";
-  textCtx.shadowBlur = 1.8;
-  textCtx.shadowOffsetX = 1;
+  textCtx.globalAlpha = 1;
+  textCtx.fillStyle = inkColor;
+  textCtx.strokeStyle = "rgba(99, 81, 53, 0.42)";
+  textCtx.lineWidth = Math.max(1.2, options.size * 0.018);
+  textCtx.shadowColor = "rgba(42, 31, 21, 0.36)";
+  textCtx.shadowBlur = 1.4;
+  textCtx.shadowOffsetX = 1.1;
+  strokeTextOnly(textCtx, text, options);
   drawTextOnly(textCtx, text, options);
   textCtx.restore();
 
@@ -132,7 +146,7 @@ const drawPosterText = (ctx, text, options) => {
     drawTextOnly(textureCtx, text, options);
 
     textCtx.save();
-    textCtx.globalAlpha = 0.22;
+    textCtx.globalAlpha = 0.34;
     textCtx.globalCompositeOperation = "multiply";
     textCtx.drawImage(textureLayer, 0, 0);
     textCtx.restore();
@@ -173,3 +187,34 @@ downloadButton.addEventListener("click", async () => {
   const bountySize = parseFloat(bountyStyle.fontSize) * scale;
   const nameRect = nameText.getBoundingClientRect();
   const bountyRect = bountyText.getBoundingClientRect();
+  const nameX = ((nameRect.left - posterRect.left) + nameRect.width / 2) * scale;
+  const nameY = (nameRect.top - posterRect.top) * scale;
+  const bountyX = (bountyRect.left - posterRect.left) * scale;
+  const bountyY = (bountyRect.top - posterRect.top) * scale;
+
+  drawPosterText(ctx, nameText.textContent, {
+    x: nameX,
+    y: nameY,
+    size: nameSize,
+    align: "center",
+    letterSpacing: `${parseFloat(nameStyle.fontSize) * 0.02 * scale}px`,
+    color: nameStyle.color,
+    texture: textTexture
+  });
+
+  drawPosterText(ctx, bountyText.textContent, {
+    x: bountyX,
+    y: bountyY,
+    size: bountySize,
+    align: "left",
+    color: bountyStyle.color,
+    texture: textTexture
+  });
+
+  const link = document.createElement("a");
+  link.download = "wanted-poster.png";
+  link.href = canvas.toDataURL("image/png");
+  link.click();
+});
+
+syncPoster();
