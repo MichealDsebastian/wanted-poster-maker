@@ -1,0 +1,10 @@
+@font-face {
+               font-family:'SundayRegular';
+               src: url('https://d1csarkz8obe9u.cloudfront.net/fonts/SundayRegular.eot');
+               src: url('https://d1csarkz8obe9u.cloudfront.net/fonts/SundayRegular.eot?#iefix') format('embedded-opentype'),
+               url('https://d1csarkz8obe9u.cloudfront.net/fonts/SundayRegular.woff2') format('woff2'),
+               url('https://d1csarkz8obe9u.cloudfront.net/fonts/SundayRegular.woff') format('woff'),
+               url('https://d1csarkz8obe9u.cloudfront.net/fonts/SundayRegular.ttf') format('truetype');
+               font-weight: normal;
+               font-style: normal;
+            }
