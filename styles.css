@@ -131,6 +131,11 @@ select {
   pointer-events: none;
 }
 
+.download-capture .pirate-name::after,
+.download-capture .bounty::after {
+  display: none;
+}
+
 .pirate-name {
   left: var(--name-x, 0%);
   right: var(--name-x, 0%);
