@@ -93,31 +93,55 @@ const drawCoverImage = (ctx, image, x, y, width, height) => {
   ctx.restore();
 };
 
-const drawPosterText = (ctx, text, options) => {
-  ctx.save();
+const drawTextOnly = (ctx, text, options) => {
   ctx.font = `${options.size}px SundayRegular, Georgia, serif`;
   ctx.textAlign = options.align;
   ctx.textBaseline = "top";
-  ctx.globalAlpha = 0.94;
-  ctx.fillStyle = "#635135";
-  ctx.shadowColor = "rgba(42, 31, 21, 0.28)";
-  ctx.shadowBlur = 1.8;
-  ctx.shadowOffsetX = 1;
+  if ("letterSpacing" in ctx) {
+    ctx.letterSpacing = options.letterSpacing || "0px";
+  }
   ctx.fillText(text.toUpperCase(), options.x, options.y);
-  ctx.restore();
+};
+
+const drawPosterText = (ctx, text, options) => {
+  const textLayer = document.createElement("canvas");
+  textLayer.width = POSTER_WIDTH;
+  textLayer.height = POSTER_HEIGHT;
+  const textCtx = textLayer.getContext("2d");
+
+  textCtx.save();
+  textCtx.globalAlpha = 0.94;
+  textCtx.fillStyle = "#635135";
+  textCtx.shadowColor = "rgba(42, 31, 21, 0.28)";
+  textCtx.shadowBlur = 1.8;
+  textCtx.shadowOffsetX = 1;
+  drawTextOnly(textCtx, text, options);
+  textCtx.restore();
 
   if (options.texture) {
-    const pattern = ctx.createPattern(options.texture, "repeat");
-    ctx.save();
-    ctx.font = `${options.size}px SundayRegular, Georgia, serif`;
-    ctx.textAlign = options.align;
-    ctx.textBaseline = "top";
-    ctx.globalAlpha = 0.22;
-    ctx.globalCompositeOperation = "multiply";
-    ctx.fillStyle = pattern;
-    ctx.fillText(text.toUpperCase(), options.x, options.y);
-    ctx.restore();
+    const textureLayer = document.createElement("canvas");
+    textureLayer.width = POSTER_WIDTH;
+    textureLayer.height = POSTER_HEIGHT;
+    const textureCtx = textureLayer.getContext("2d");
+    const pattern = textureCtx.createPattern(options.texture, "repeat");
+
+    textureCtx.fillStyle = pattern;
+    textureCtx.fillRect(0, 0, POSTER_WIDTH, POSTER_HEIGHT);
+    textureCtx.globalCompositeOperation = "destination-in";
+    textureCtx.fillStyle = "#000";
+    drawTextOnly(textureCtx, text, options);
+
+    textCtx.save();
+    textCtx.globalAlpha = 0.22;
+    textCtx.globalCompositeOperation = "multiply";
+    textCtx.drawImage(textureLayer, 0, 0);
+    textCtx.restore();
   }
+
+  ctx.save();
+  ctx.globalCompositeOperation = "multiply";
+  ctx.drawImage(textLayer, 0, 0);
+  ctx.restore();
 };
 
 downloadButton.addEventListener("click", async () => {
@@ -147,29 +171,5 @@ downloadButton.addEventListener("click", async () => {
   const bountyStyle = getComputedStyle(bountyText);
   const nameSize = parseFloat(nameStyle.fontSize) * scale;
   const bountySize = parseFloat(bountyStyle.fontSize) * scale;
-  const nameY = POSTER_HEIGHT * (Number(nameYInput.value) / 100);
-  const bountyY = POSTER_HEIGHT * 0.848;
-
-  drawPosterText(ctx, nameText.textContent, {
-    x: POSTER_WIDTH / 2,
-    y: nameY,
-    size: nameSize,
-    align: "center",
-    texture: textTexture
-  });
-
-  drawPosterText(ctx, bountyText.textContent, {
-    x: POSTER_WIDTH * 0.2,
-    y: bountyY,
-    size: bountySize,
-    align: "left",
-    texture: textTexture
-  });
-
-  const link = document.createElement("a");
-  link.download = "wanted-poster.png";
-  link.href = canvas.toDataURL("image/png");
-  link.click();
-});
-
-syncPoster();
+  const nameRect = nameText.getBoundingClientRect();
+  const bountyRect = bountyText.getBoundingClientRect();
